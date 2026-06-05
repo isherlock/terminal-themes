@@ -1,0 +1,8 @@
+.DS_Store
+node_modules/
+.claude/settings.local.json
+# Vendored mbadolato corpus — fetch with tools/fetch_corpus.sh, build emits data/
+/corpus/
+
+# Python bytecode cache
+__pycache__/

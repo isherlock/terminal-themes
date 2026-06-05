@@ -1,0 +1,1970 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terminal Themes — iTerm2 colour theme gallery</title>
+<script src="data/themes.js"></script>
+<style>
+  @font-face {
+    font-family: 'JetBrains Mono';
+    src: url('fonts/jetbrains-mono.woff2') format('woff2');
+    font-weight: 100 800;
+    font-style: normal;
+    font-display: swap;
+  }
+  :root {
+    --mono: ui-monospace, SFMono-Regular, Menlo, "Cascadia Mono", monospace;
+    /* terminal previews use a real terminal font, antialiased like an actual terminal */
+    --mono-term: 'JetBrains Mono', var(--mono);
+    /* default chrome vars so themed components degrade outside a themed container
+       (modal/columns override these inline via applyColumn) */
+    --c-bg: #1a1c22; --c-surface: #202229; --c-border: #2a2c35; --c-border-soft: #24262e;
+    --c-text: #cdd2dc; --c-text-strong: #eef1f5; --c-text-dim: #7a8089;
+    --c-btn-border: #33363f; --c-hover: #23262f;
+    --c-hatch-a: #2a2c35; --c-hatch-b: #1f2128; --c-sw-border: rgba(205, 210, 220, 0.18);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: #14151a;
+    color: #cdd2dc;
+    font-family: var(--mono);
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: unset;
+    font-smooth: never;
+  }
+  header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 20px 24px 12px;
+    border-bottom: 1px solid #262830;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  header .count {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #7c828f;
+  }
+  .search {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: #cdd2dc;
+    background: #1a1c22;
+    border: 1px solid #2a2c35;
+    border-radius: 6px;
+    padding: 7px 11px;
+    width: 240px;
+    -webkit-font-smoothing: none;
+  }
+  .search:focus { outline: none; border-color: #4a4d58; }
+  .search::placeholder { color: #5f6672; }
+  .search::-webkit-search-cancel-button { -webkit-appearance: none; }
+  .htools { display: flex; align-items: center; gap: 10px; }
+  .seg {
+    display: inline-flex;
+    border: 1px solid #2a2c35;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .seg button {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: #1a1c22;
+    color: #9aa0ac;
+    border: none;
+    border-right: 1px solid #2a2c35;
+    padding: 7px 12px;
+    cursor: pointer;
+    -webkit-font-smoothing: none;
+  }
+  .seg button:last-child { border-right: none; }
+  .seg button:hover:not(.active) { color: #cdd2dc; }
+  .seg button.active { background: #2a2c35; color: #e6e9ef; }
+  .cmpbtn {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: #cdd2dc;
+    background: #1a1c22;
+    border: 1px solid #2a2c35;
+    border-radius: 6px;
+    padding: 7px 14px;
+    cursor: pointer;
+    -webkit-font-smoothing: none;
+  }
+  .cmpbtn:hover { border-color: #4a4d58; }
+  .a11y-toggle.active { background: #2c3742; border-color: #5a6470; color: #eef1f5; }
+  body.page-light .a11y-toggle.active { background: #cfd3da; border-color: #9aa0ac; color: #1a1c22; }
+  /* detail-view compare button follows the theme-matched chrome */
+  .modal-head .cmpbtn {
+    color: var(--c-text);
+    background: var(--c-surface);
+    border-color: var(--c-btn-border);
+    padding: 5px 11px;
+    font-size: 12px;
+  }
+  .modal-head .cmpbtn:hover { background: var(--c-hover); border-color: var(--c-text-dim); }
+  .gallery { padding-bottom: 40px; }
+  .section { padding: 18px 24px 24px; }
+  .section-light { background: #dde0e6; }
+  .section-h {
+    margin: 0 0 12px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    color: #7c828f;
+  }
+  .section-h .n { margin-left: 7px; font-weight: 400; opacity: 0.55; }
+  .section-light .section-h { color: #565b66; }
+  footer.cred {
+    padding: 16px 24px 44px;
+    font-size: 11px;
+    color: #5f6671;
+  }
+  footer.cred a { color: #8a909c; text-decoration: none; border-bottom: 1px solid #3a3d47; }
+  footer.cred a:hover { color: #cdd2dc; }
+  body.page-light footer.cred { color: #6b7280; }
+  body.page-light footer.cred a { color: #46505f; border-bottom-color: #c2c7d0; }
+
+  /* Light-only filter turns the whole gallery page light */
+  body.page-light { background: #dde0e6; color: #2a2d34; min-height: 100vh; }
+  body.page-light header { background: #dde0e6; border-bottom-color: #c6cad1; }
+  body.page-light header h1 { color: #1a1c22; }
+  body.page-light .count { color: #5f6671; }
+  body.page-light .section-light { background: transparent; }
+  body.page-light .section-h { color: #565b66; }
+  body.page-light .seg { border-color: #c2c7d0; }
+  body.page-light .seg button { background: #eceef2; color: #5f6671; border-right-color: #d2d6dd; }
+  body.page-light .seg button:hover:not(.active) { color: #2a2d34; }
+  body.page-light .seg button.active { background: #cfd3da; color: #1a1c22; }
+  body.page-light .search { background: #f4f5f7; border-color: #c2c7d0; color: #2a2d34; }
+  body.page-light .search::placeholder { color: #9aa0ac; }
+  body.page-light .cmpbtn { background: #f4f5f7; border-color: #c2c7d0; color: #2a2d34; }
+  body.page-light .cmpbtn:hover { border-color: #9aa0ac; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    border: 1px solid var(--cb, #2a2c35);
+    border-radius: 8px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
+    /* skip layout/paint of off-screen cards; reserve ~height so scroll is stable */
+    content-visibility: auto;
+    contain-intrinsic-size: auto 230px;
+  }
+  .term {
+    font-family: var(--mono-term);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    padding: 12px 14px 10px;
+    font-size: 13px;
+    line-height: 1.55;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .term .row { display: block; }
+  .swatches {
+    display: flex;
+    margin-top: 8px;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .swatches span {
+    flex: 1 1 0;
+    height: 12px;
+  }
+  .cardhead {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 7px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--cb, #1a1c22);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.18);
+    color: var(--cf, #cdd2dc);
+  }
+  /* low-contrast marker on the card title bar (colours from .cb-lg / .cb-fail) */
+  .card-contrast {
+    margin-right: auto;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 1px 6px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-variant-numeric: tabular-nums;
+  }
+  .tag {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 7px;
+    border-radius: 999px;
+    border: 1px solid #3a3d47;
+    color: #9aa0ac;
+  }
+  .tag.light { color: #1a1c22; background: #d7dbe2; border-color: #d7dbe2; }
+
+  .card { cursor: pointer; }
+  .card:hover { border-color: #4a4d58; }
+
+  /* saved-theme cards (open in the editor; have a delete control) */
+  .saved-card { position: relative; }
+  .saved-del {
+    position: absolute;
+    top: 5px;
+    left: 7px;
+    z-index: 2;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    color: var(--cf, #cdd2dc);
+    background: var(--cb, #1a1c22);
+    border: 1px solid rgba(128, 128, 128, 0.45);
+    border-radius: 5px;
+    padding: 2px 8px;
+    opacity: 0.85;
+    cursor: pointer;
+    -webkit-font-smoothing: none;
+  }
+  .saved-del:hover { opacity: 1; color: #ff8d8d; border-color: rgba(220, 90, 90, 0.75); }
+  .saved-del.confirm {
+    opacity: 1;
+    color: #fff;
+    background: #c0392b;
+    border-color: #c0392b;
+  }
+  .section-saved { background: rgba(120, 130, 150, 0.06); }
+  body.page-light .section-saved { background: rgba(120, 130, 150, 0.10); }
+
+  /* ---- Detail modal ---- */
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 32px 16px;
+    z-index: 100;
+  }
+  .backdrop.open { display: flex; }
+  .modal {
+    /* chrome palette — overridden by .modal.light for light themes */
+    --c-bg: #16171c;
+    --c-surface: #1a1c22;
+    --c-border: #2a2c35;
+    --c-border-soft: #262830;
+    --c-text: #cdd2dc;
+    --c-text-strong: #e6e9ef;
+    --c-text-dim: #7c828f;
+    --c-btn-border: #3a3d47;
+    --c-hover: #2a2c35;
+    --c-hatch-a: #2a2c35;
+    --c-hatch-b: #1a1c22;
+    --c-sw-border: rgba(255,255,255,0.15);
+
+    width: 100%;
+    max-width: 880px;
+    background: var(--c-bg);
+    border: 1px solid var(--c-border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.45);
+  }
+  .modal.light {
+    --c-bg: #f4f5f7;
+    --c-surface: #e9ebef;
+    --c-border: #d2d6dd;
+    --c-border-soft: #dde0e6;
+    --c-text: #2a2d34;
+    --c-text-strong: #14151a;
+    --c-text-dim: #6b7280;
+    --c-btn-border: #c2c7d0;
+    --c-hover: #dde0e6;
+    --c-hatch-a: #d2d6dd;
+    --c-hatch-b: #e9ebef;
+    --c-sw-border: rgba(0,0,0,0.15);
+  }
+  .modal-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--c-border-soft);
+    background: var(--c-surface);
+  }
+  .modal-head .mname { font-weight: 600; font-size: 15px; color: var(--c-text-strong); }
+  .modal-head .msrc { font-size: 12px; color: var(--c-text-dim); }
+  .modal-head .spacer { flex: 1 1 auto; }
+  .modal-head .close {
+    background: none;
+    border: 1px solid var(--c-btn-border);
+    color: var(--c-text);
+    font-family: var(--mono);
+    font-size: 16px;
+    line-height: 1;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .modal-head .close:hover { background: var(--c-hover); }
+  .modal-body { padding: 18px; }
+
+  /* fuller preview "terminal window" */
+  .preview {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--c-border);
+    background: #000;
+  }
+  .preview .titlebar {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 12px;
+    background: var(--c-surface);
+    border-bottom: 1px solid var(--c-border);
+  }
+  .preview .titlebar .dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .preview .titlebar .dot.r { background: #ff5f57; }
+  .preview .titlebar .dot.y { background: #febc2e; }
+  .preview .titlebar .dot.g { background: #28c840; }
+  .preview .titlebar .ttl {
+    margin-left: 6px;
+    font-size: 11px;
+    color: var(--c-text-dim);
+  }
+  .preview .term {
+    padding: 14px 16px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .preview .term .row { white-space: pre-wrap; word-break: break-word; }
+  .cursorblock {
+    padding: 0 1px;
+    border-radius: 1px;
+  }
+  .tagspan {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    opacity: 0.55;
+    margin-left: 8px;
+  }
+
+  /* reference blocks */
+  .refs { margin-top: 18px; }
+  .ref-h {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--c-text-dim);
+    margin: 0 0 8px;
+  }
+  .ansi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 6px;
+  }
+  .ui-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 6px;
+  }
+  .ref-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 7px;
+    background: var(--c-surface);
+    border: 1px solid var(--c-border-soft);
+    border-radius: 5px;
+    font-size: 11px;
+  }
+  .ref-item.empty { opacity: 0.45; }
+  .ref-item .sw {
+    width: 18px;
+    height: 18px;
+    border-radius: 3px;
+    border: 1px solid var(--c-sw-border);
+    flex: 0 0 auto;
+  }
+  .ref-item .sw.empty {
+    background: repeating-linear-gradient(45deg, var(--c-hatch-a) 0 4px, var(--c-hatch-b) 4px 8px);
+  }
+  .ref-item .rl { color: var(--c-text); }
+  .ref-item .rh { margin-left: auto; color: var(--c-text-dim); }
+  .refs .block + .block { margin-top: 18px; }
+  .contrast-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 6px;
+  }
+  .ref-item .cratio {
+    margin-left: auto;
+    color: var(--c-text-dim);
+    font-variant-numeric: tabular-nums;
+  }
+  .cbadge {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    padding: 1px 6px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    white-space: nowrap;
+  }
+  .cb-aaa  { color: #1aa06a; background: rgba(26, 160, 106, 0.15); border-color: rgba(26, 160, 106, 0.4); }
+  .cb-aa   { color: #1aa06a; background: rgba(26, 160, 106, 0.10); border-color: rgba(26, 160, 106, 0.28); }
+  .cb-lg   { color: #c08400; background: rgba(192, 132, 0, 0.16);  border-color: rgba(192, 132, 0, 0.4); }
+  .cb-fail { color: #cc4d4d; background: rgba(204, 77, 77, 0.13);  border-color: rgba(204, 77, 77, 0.34); }
+
+  /* ---- Compare (full-screen, hash-routed view) ---- */
+  #compareView { display: none; }
+  body.view-compare header,
+  body.view-compare .gallery,
+  body.view-compare footer { display: none; }
+  body.view-compare #compareView { display: block; }
+  .cmp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    min-height: 100vh;
+  }
+  .cmp-col { min-width: 0; padding: 22px 28px; }
+  /* cap content width on wide screens and pull each side toward the centre seam */
+  .cmp-col > .cmp-colhead, .cmp-col > .cmp-pane { max-width: 720px; }
+  #cmpColA > .cmp-colhead, #cmpColA > .cmp-pane { margin-left: auto; }
+  #cmpColB > .cmp-colhead, #cmpColB > .cmp-pane { margin-right: auto; }
+  .cmp-colhead { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .cmp-colhead .combo { flex: 1 1 auto; }
+  .cmp-back {
+    flex: 0 0 auto;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--c-text);
+    background: var(--c-surface);
+    border: 1px solid var(--c-btn-border);
+    border-radius: 6px;
+    padding: 7px 11px;
+    cursor: pointer;
+    white-space: nowrap;
+    -webkit-font-smoothing: none;
+  }
+  .cmp-back:hover { background: var(--c-hover); }
+  .cmp-pick {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--c-text);
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: 6px;
+    padding: 7px 11px;
+    width: 100%;
+    margin-bottom: 10px;
+    -webkit-font-smoothing: none;
+    cursor: pointer;
+  }
+  .cmp-pick:focus { outline: none; border-color: #4a4d58; }
+  .combo { position: relative; }
+  .combo-input { margin-bottom: 0; cursor: text; }
+  .combo-list {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    max-height: 320px;
+    overflow-y: auto;
+    background: var(--c-bg);
+    border: 1px solid var(--c-border);
+    border-radius: 6px;
+    padding: 4px;
+    z-index: 5;
+  }
+  .combo-list.open { display: block; }
+  .combo-opt {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--c-text);
+    cursor: pointer;
+  }
+  .combo-opt:hover, .combo-opt.active { background: var(--c-hover); }
+  .combo-opt[aria-selected="true"] .co-name { color: var(--c-text-strong); font-weight: 600; }
+  .co-name { flex: 1 1 auto; }
+  .combo-group {
+    padding: 7px 8px 3px;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--c-text-dim);
+  }
+  .combo-empty { padding: 8px; font-size: 12px; color: var(--c-text-dim); }
+  @media (max-width: 760px) {
+    .cmp-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ---- Editor (full-screen, reuses the compare shell) ---- */
+  #editView { display: none; }
+  body.view-edit header,
+  body.view-edit .gallery,
+  body.view-edit footer { display: none; }
+  body.view-edit #editView { display: block; }
+  #editColA > .cmp-colhead, #editColA > .cmp-pane { margin-left: auto; }
+  #editColB > .cmp-colhead, #editColB > .cmp-pane { margin-right: auto; }
+  .cmp-colhead .spacer { flex: 1 1 auto; }
+  .edit-tag {
+    flex: 0 0 auto;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--c-btn-border);
+    color: var(--c-text-dim);
+  }
+  .edit-tag.working { color: var(--c-text-strong); border-color: var(--c-text-dim); }
+  .edit-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--c-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .edit-name-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--c-text-strong);
+    background: var(--c-surface);
+    border: 1px solid var(--c-btn-border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    -webkit-font-smoothing: none;
+  }
+  .edit-name-input:focus { outline: none; border-color: var(--c-text-dim); }
+  .edit-item .sw-input {
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    flex: 0 0 auto;
+    border: 1px solid var(--c-sw-border);
+    border-radius: 3px;
+    background: none;
+    cursor: pointer;
+  }
+  .edit-item .sw-input::-webkit-color-swatch-wrapper { padding: 0; }
+  .edit-item .sw-input::-webkit-color-swatch { border: none; border-radius: 2px; }
+  .edit-item .sw-input:hover { border-color: var(--c-text-dim); }
+  /* editable rows read as form fields: the swatch is a real input, the hex has a
+     resting box; the contrast table below has neither, so it reads as output */
+  .edit-item .hex-input {
+    margin-left: auto;
+    width: 64px;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-align: right;
+    color: var(--c-text);
+    background: var(--c-bg);
+    border: 1px solid var(--c-border);
+    border-radius: 4px;
+    padding: 2px 5px;
+    -webkit-font-smoothing: none;
+    cursor: text;
+  }
+  .edit-item .hex-input:hover { border-color: var(--c-text-dim); }
+  .edit-item .hex-input:focus {
+    outline: none;
+    color: var(--c-text-strong);
+    border-color: var(--c-text-strong);
+  }
+  /* header tags: which blocks are editable vs computed */
+  .rh-tag {
+    margin-left: 8px;
+    padding: 1px 7px;
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    border-radius: 999px;
+    vertical-align: 1px;
+  }
+  .rh-tag.edit { color: var(--c-text-strong); border: 1px solid var(--c-text-dim); }
+  .rh-tag.computed { color: var(--c-text-dim); border: 1px solid var(--c-border-soft); }
+
+  /* ---- Export menu (themed via --c-*, used in modal + editor) ---- */
+  .exp-wrap { position: relative; display: inline-block; }
+  .exp-btn {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--c-text);
+    background: var(--c-surface);
+    border: 1px solid var(--c-btn-border);
+    border-radius: 6px;
+    padding: 7px 11px;
+    cursor: pointer;
+    white-space: nowrap;
+    -webkit-font-smoothing: none;
+  }
+  .exp-btn:hover { background: var(--c-hover); border-color: var(--c-text-dim); }
+  .exp-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 5px;
+    min-width: 200px;
+    background: var(--c-bg);
+    border: 1px solid var(--c-border);
+    border-radius: 7px;
+    padding: 4px;
+    z-index: 20;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+  }
+  .exp-menu.open { display: block; }
+  .exp-menu button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--c-text);
+    background: none;
+    border: none;
+    border-radius: 4px;
+    padding: 7px 9px;
+    cursor: pointer;
+    -webkit-font-smoothing: none;
+  }
+  .exp-menu button:hover { background: var(--c-hover); }
+
+  /* ---- Import drop overlay ---- */
+  #dropHint {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: rgba(10, 12, 16, 0.82);
+    color: #e6e6e6;
+    font-size: 15px;
+    letter-spacing: 0.03em;
+    border: 2px dashed rgba(255, 255, 255, 0.32);
+    pointer-events: none;
+  }
+  body.dragging #dropHint { display: flex; }
+
+  /* ---- Preview scene switcher (detail + compare + editor) ---- */
+  .scene-bar { display: flex; justify-content: center; padding: 16px 0 2px; }
+  .modal .scene-bar { padding: 2px 0 14px; }
+  .scene-switch {
+    display: inline-flex;
+    border: 1px solid var(--c-border);
+    border-radius: 7px;
+    overflow: hidden;
+  }
+  .scene-switch button {
+    font-family: var(--mono);
+    font-size: 12px;
+    -webkit-font-smoothing: none;
+    color: var(--c-text-dim);
+    background: var(--c-surface);
+    border: none;
+    border-right: 1px solid var(--c-border);
+    padding: 6px 16px;
+    cursor: pointer;
+  }
+  .scene-switch button:last-child { border-right: none; }
+  .scene-switch button:hover { color: var(--c-text); }
+  .scene-switch button.active { background: var(--c-hover); color: var(--c-text-strong); }
+</style>
+</head>
+<body>
+<header>
+  <div class="htext">
+    <h1>Terminal Themes</h1>
+    <div class="count" id="count"></div>
+  </div>
+  <div class="htools">
+    <div class="seg" id="variantSeg" role="group" aria-label="Filter by variant">
+      <button data-v="all" class="active" type="button">All</button>
+      <button data-v="dark" type="button">Dark</button>
+      <button data-v="light" type="button">Light</button>
+    </div>
+    <button id="a11yToggle" class="cmpbtn a11y-toggle" type="button" aria-pressed="false"
+            title="Show only themes whose foreground passes WCAG AA contrast on the background">AA only</button>
+    <input id="search" class="search" type="search" placeholder="search themes…"
+           autocomplete="off" spellcheck="false" aria-label="Search themes">
+    <button id="cmpBtn" class="cmpbtn" type="button">compare</button>
+    <button id="importBtn" class="cmpbtn" type="button" title="Load a .itermcolors or JSON theme to edit">import</button>
+    <input type="file" id="importFile" accept=".itermcolors,.json,application/xml,text/xml,application/json" hidden>
+  </div>
+</header>
+<div id="dropHint"><span>drop a <strong>.itermcolors</strong> or <strong>.json</strong> file to import &amp; edit</span></div>
+<main class="gallery" id="gallery"></main>
+<footer class="cred">
+  Themes from <a href="https://github.com/mbadolato/iTerm2-Color-Schemes" target="_blank" rel="noopener">mbadolato/iTerm2-Color-Schemes</a> (MIT) &middot;
+  font <a href="https://github.com/JetBrains/JetBrainsMono" target="_blank" rel="noopener">JetBrains Mono</a> (OFL)
+</footer>
+
+<div class="backdrop" id="backdrop">
+  <div class="modal" id="modal" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <span class="mname" id="modalName"></span>
+      <span class="tag" id="modalTag"></span>
+      <span class="msrc" id="modalSrc"></span>
+      <span class="spacer"></span>
+      <button class="cmpbtn" id="detailEdit" type="button">edit ▸</button>
+      <button class="cmpbtn" id="detailCmp" type="button">compare ▸</button>
+      <div class="exp-wrap" id="detailExport"></div>
+      <button class="close" id="modalClose" aria-label="Close">&times;</button>
+    </div>
+    <div class="scene-bar"><div class="scene-switch" role="group" aria-label="Preview content">
+      <button type="button" data-scene="shell" class="active">shell</button>
+      <button type="button" data-scene="code">code</button>
+      <button type="button" data-scene="system">system</button>
+      <button type="button" data-scene="logs">logs</button>
+    </div></div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<section id="compareView" aria-label="Compare themes">
+  <div class="scene-bar"><div class="scene-switch" role="group" aria-label="Preview content">
+    <button type="button" data-scene="shell" class="active">shell</button>
+    <button type="button" data-scene="code">code</button>
+    <button type="button" data-scene="system">system</button>
+    <button type="button" data-scene="logs">logs</button>
+  </div></div>
+  <div class="cmp-grid">
+    <div class="cmp-col" id="cmpColA">
+      <div class="cmp-colhead">
+        <button class="cmp-back" id="cmpBack" type="button">&larr; gallery</button>
+        <div class="combo" id="comboA">
+          <input class="cmp-pick combo-input" id="cmpA" type="text" autocomplete="off"
+                 spellcheck="false" placeholder="type a theme…" aria-label="Theme A">
+          <div class="combo-list" id="comboListA"></div>
+        </div>
+      </div>
+      <div class="cmp-pane" id="cmpPaneA"></div>
+    </div>
+    <div class="cmp-col" id="cmpColB">
+      <div class="cmp-colhead">
+        <div class="combo" id="comboB">
+          <input class="cmp-pick combo-input" id="cmpB" type="text" autocomplete="off"
+                 spellcheck="false" placeholder="type a theme…" aria-label="Theme B">
+          <div class="combo-list" id="comboListB"></div>
+        </div>
+      </div>
+      <div class="cmp-pane" id="cmpPaneB"></div>
+    </div>
+  </div>
+</section>
+
+<section id="editView" aria-label="Edit theme">
+  <div class="scene-bar"><div class="scene-switch" role="group" aria-label="Preview content">
+    <button type="button" data-scene="shell" class="active">shell</button>
+    <button type="button" data-scene="code">code</button>
+    <button type="button" data-scene="system">system</button>
+    <button type="button" data-scene="logs">logs</button>
+  </div></div>
+  <div class="cmp-grid">
+    <div class="cmp-col" id="editColA">
+      <div class="cmp-colhead">
+        <button class="cmp-back" id="editBack" type="button">&larr; gallery</button>
+        <span class="edit-tag">before</span>
+        <span class="edit-name" id="editName"></span>
+      </div>
+      <div class="cmp-pane" id="editPaneA"></div>
+    </div>
+    <div class="cmp-col" id="editColB">
+      <div class="cmp-colhead">
+        <span class="edit-tag working">working</span>
+        <input class="edit-name-input" id="editNameInput" type="text" autocomplete="off"
+               spellcheck="false" aria-label="Theme name" placeholder="theme name">
+        <button class="cmp-back" id="editSave" type="button">save</button>
+        <div class="exp-wrap" id="editExport"></div>
+        <button class="cmp-back" id="editReset" type="button">&#8634; reset</button>
+      </div>
+      <div class="cmp-pane" id="editPaneB">
+        <div id="editPreview"></div>
+        <div id="editControls"></div>
+        <div id="editContrast" class="refs"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var themes = window.THEMES || [];
+
+  // ANSI role helpers: 0-7 normal, 8-15 bright.
+  function span(color, text) {
+    return '<span style="color:' + color + '">' + esc(text) + '</span>';
+  }
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function card(t) {
+    var a = t.ansi; // 16 entries
+    var fg = t.fg;
+    // role colours
+    var red = a[1], green = a[2], yellow = a[3], blue = a[4],
+        magenta = a[5], cyan = a[6], dim = a[8] || a[0],
+        brightGreen = a[10] || a[2], brightCyan = a[14] || a[6];
+
+    var lines = [];
+
+    // prompt line: ~/projects/app  (main)
+    lines.push(
+      span(brightGreen, '~/projects/app') + '  ' +
+      span(brightCyan, 'main')
+    );
+
+    // $ ls
+    lines.push(span(dim, '$ ') + span(fg, 'ls'));
+    lines.push(
+      span(blue, 'src') + '  ' +
+      span(green, 'run.sh') + '  ' +
+      span(fg, 'README.md') + '  ' +
+      span(magenta, 'dist.tar.gz')
+    );
+
+    // $ git status
+    lines.push(span(dim, '$ ') + span(fg, 'git status'));
+    lines.push(span(yellow, ' M ') + span(fg, 'src/app.js'));
+    lines.push(span(dim, '?? notes.md'));
+
+    // syntax-flavoured code line
+    lines.push(
+      span(magenta, 'const') + span(fg, ' port = ') +
+      span(cyan, '8080') + span(dim, '  // default')
+    );
+    lines.push(
+      span(fg, 'log(') + span(yellow, '"listening"') + span(fg, ')')
+    );
+
+    // 16-swatch ANSI strip
+    var sw = '';
+    for (var i = 0; i < 16; i++) {
+      sw += '<span style="background:' + (a[i] || '#000') + '"></span>';
+    }
+
+    var termHtml =
+      '<div class="term" style="background:' + t.bg + ';color:' + fg + '">' +
+        lines.map(function (l) { return '<span class="row">' + l + '</span>'; }).join('') +
+        '<div class="swatches">' + sw + '</div>' +
+      '</div>';
+
+    // flag themes whose fg fails WCAG AA on the bg (hard to read)
+    var cr = contrastRatio(t.fg, t.bg);
+    var crBadge = cr < 4.5
+      ? '<span class="card-contrast ' + (cr < 3 ? 'cb-fail' : 'cb-lg') + '" ' +
+          'title="foreground vs background contrast">' + cr.toFixed(1) + ':1</span>'
+      : '';
+    var headHtml =
+      '<div class="cardhead">' + crBadge + '<span class="name">' + esc(t.name) + '</span></div>';
+
+    var el = document.createElement('div');
+    el.className = 'card';
+    el.style.setProperty('--cb', t.bg); // card border + title bar bg match the theme, not black
+    el.style.setProperty('--cf', t.fg);
+    el.innerHTML = headHtml + termHtml;
+    return el;
+  }
+
+  // slug: lowercase, trim, non-alphanumerics -> "-", collapse repeats, trim "-"
+  function slug(name) {
+    return String(name)
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+  }
+
+  // ---- Reusable fuller preview (pure function of theme) ----
+  // ---- Preview helpers (module-level so every scene shares them) ----
+  function styled(css, text) { return '<span style="' + css + '">' + esc(text) + '</span>'; }
+  function tagspan(label) { return '<span class="tagspan">' + esc(label) + '</span>'; }
+  function rep(s, n) { var o = ''; for (var i = 0; i < n; i++) o += s; return o; }
+  function cursorBlock(t) {
+    return '<span class="cursorblock" style="background:' + t.cursor + ';color:' + t.cursorText + '">&nbsp;</span>';
+  }
+  // named ANSI roles (bright fallbacks) + nullable-field fallbacks
+  function roles(t) {
+    var a = t.ansi;
+    return {
+      fg: t.fg, bg: t.bg,
+      black: a[0], red: a[1], green: a[2], yellow: a[3], blue: a[4],
+      magenta: a[5], cyan: a[6], white: a[7], dim: a[8] || a[0],
+      brBlack: a[8] || a[0], brRed: a[9] || a[1], brGreen: a[10] || a[2],
+      brYellow: a[11] || a[3], brBlue: a[12] || a[4], brMagenta: a[13] || a[5],
+      brCyan: a[14] || a[6], brWhite: a[15] || a[7],
+      link: t.link || a[6], bold: t.bold || a[15] || a[7] || t.fg
+    };
+  }
+
+  // ---- Preview scenes: each returns an array of line-HTML strings ----
+  function sceneShell(t) {
+    var r = roles(t), L = [];
+    L.push(span(r.brGreen, 'ian@host') + span(r.dim, ':') + span(r.brBlue, '~/projects/app') + ' ' + span(r.cyan, 'git:(') + span(r.brGreen, 'main') + span(r.cyan, ')') + ' ' + span(r.green, '$') + ' ');
+    L.push(span(r.dim, '$ ') + span(r.fg, 'ls --color'));
+    L.push(span(r.brBlue, 'src') + '  ' + span(r.blue, 'node_modules') + '  ' + span(r.green, 'build.sh') + '  ' + span(r.cyan, 'latest -> v2') + '  ' + span(r.magenta, 'backup.zip') + '  ' + span(r.red, 'release.tar.gz') + '  ' + span(r.fg, 'README.md'));
+    L.push(span(r.dim, '$ ') + span(r.fg, 'git status -s'));
+    L.push(span(r.green, ' A ') + span(r.fg, 'src/index.js'));
+    L.push(span(r.yellow, ' M ') + span(r.fg, 'src/server.js'));
+    L.push(span(r.red, ' D ') + span(r.fg, 'src/old.js'));
+    L.push(span(r.dim, '?? notes.md'));
+    L.push(span(r.dim, '$ ') + span(r.fg, 'npm run build'));
+    L.push(span(r.blue, '> ') + span(r.fg, 'compiling 124 modules...'));
+    L.push(span(r.brYellow, 'warning') + span(r.fg, '  deprecated API used in ') + span(r.fg, 'src/server.js:42'));
+    L.push(span(r.brRed, 'error') + span(r.fg, '    cannot resolve module ') + span(r.fg, "'./missing'"));
+    L.push(span(r.brGreen, 'success') + span(r.fg, '  built in 2.41s'));
+    L.push(span(r.dim, '$ ') + span(r.fg, 'npm test'));
+    L.push(span(r.green, '  ✓') + span(r.fg, ' parses config'));
+    L.push(span(r.green, '  ✓') + span(r.fg, ' handles empty input'));
+    L.push(span(r.red, '  ✗') + span(r.fg, ' rejects bad token') + span(r.dim, '  (1 failing)'));
+    L.push(span(r.dim, 'app.js') + tagspan('syntax highlight'));
+    L.push(styled('color:' + r.magenta, 'function') + ' ' + styled('color:' + r.brBlue, 'greet') + styled('color:' + r.fg, '(') + styled('color:' + r.brYellow, 'name') + styled('color:' + r.fg, ') {'));
+    L.push('  ' + styled('color:' + r.magenta, 'const') + ' ' + styled('color:' + r.fg, 'count ') + styled('color:' + r.cyan, '=') + ' ' + styled('color:' + r.brMagenta, '42') + styled('color:' + r.fg, ';') + styled('color:' + r.dim, '  // a number'));
+    L.push('  ' + styled('color:' + r.fg, 'return ') + styled('color:' + r.green, '`hello, ${') + styled('color:' + r.fg, 'name') + styled('color:' + r.green, '}`') + styled('color:' + r.fg, ';'));
+    L.push(styled('color:' + r.fg, '}'));
+    L.push(span(r.fg, 'docs: ') + styled('color:' + r.link + ';text-decoration:underline', 'https://example.com/themes'));
+    L.push(span(r.fg, 'find ') + styled('background:' + t.selection + ';color:' + t.selectionText, 'these selected words') + span(r.fg, ' in the buffer') + tagspan('selection'));
+    L.push(styled('color:' + r.bold + ';font-weight:700', 'bold text') + tagspan('bold') + '  ' + styled('color:' + r.dim, 'dim text') + tagspan('dim') + '  ' + styled('color:' + r.fg + ';font-style:italic', 'italic text') + tagspan('italic'));
+    L.push(span(r.green, '$') + ' ' + span(r.fg, 'echo ready') + cursorBlock(t));
+    return L;
+  }
+  function sceneCode(t) {
+    var r = roles(t);
+    function g(n) { var s = String(n); if (s.length < 2) s = ' ' + s; return styled('color:' + r.brBlack, ' ' + s + '  '); }
+    var kw = 'color:' + r.magenta, st = 'color:' + r.green, cm = 'color:' + r.dim, fn = 'color:' + r.brBlue,
+        nu = 'color:' + r.brMagenta, ty = 'color:' + r.yellow, pl = 'color:' + r.fg, op = 'color:' + r.cyan;
+    var L = [];
+    L.push(g(1) + styled(kw, 'import') + styled(pl, ' { ') + styled(fn, 'readFile') + styled(pl, ' } ') + styled(kw, 'from') + ' ' + styled(st, "'node:fs/promises'"));
+    L.push(g(2) + styled(kw, 'import') + styled(pl, ' { ') + styled(fn, 'parse') + styled(pl, ' } ') + styled(kw, 'from') + ' ' + styled(st, "'./config.js'"));
+    L.push(g(3));
+    L.push(g(4) + styled(cm, '// load and validate the app config'));
+    L.push(g(5) + styled(kw, 'export') + ' ' + styled(kw, 'async') + ' ' + styled(kw, 'function') + ' ' + styled(fn, 'load') + styled(pl, '(') + styled(ty, 'path') + styled(pl, ') {'));
+    L.push(g(6) + styled(pl, '  ') + styled(kw, 'const') + styled(pl, ' raw ') + styled(op, '=') + ' ' + styled(kw, 'await') + ' ' + styled(fn, 'readFile') + styled(pl, '(path, ') + styled(st, "'utf8'") + styled(pl, ')'));
+    L.push(g(7) + styled(pl, '  ') + styled(kw, 'const') + styled(pl, ' cfg ') + styled(op, '=') + ' ' + styled(fn, 'parse') + styled(pl, '(raw)'));
+    L.push(g(8) + styled(pl, '  ') + styled(kw, 'if') + styled(pl, ' (') + styled(op, '!') + styled(pl, 'cfg.port) {'));
+    L.push(g(9) + styled(pl, '    ') + styled(kw, 'throw') + ' ' + styled(kw, 'new') + ' ' + styled(fn, 'Error') + styled(pl, '(') + styled(st, '`missing "port" in ${') + styled(pl, 'path') + styled(st, '}`') + styled(pl, ')'));
+    L.push(g(10) + styled(pl, '  }'));
+    L.push(g(11) + styled(pl, '  ') + styled(kw, 'return') + styled(pl, ' { ') + styled(op, '...') + styled(pl, 'cfg, port: ') + styled(fn, 'Number') + styled(pl, '(cfg.port) }'));
+    L.push(g(12) + styled(pl, '}'));
+    L.push(g(13));
+    L.push(g(14) + styled(kw, 'const') + ' ' + styled(ty, 'DEFAULTS') + styled(pl, ' ') + styled(op, '=') + styled(pl, ' { host: ') + styled(st, "'localhost'") + styled(pl, ', port: ') + styled(nu, '8080') + styled(pl, ' }'));
+    L.push(g(15) + styled(fn, 'load') + styled(pl, '(') + styled(st, "'./app.config.js'") + styled(pl, ').') + styled(fn, 'then') + styled(pl, '(') + styled(fn, 'start') + styled(pl, ')') + cursorBlock(t));
+    return L;
+  }
+  function sceneSystem(t) {
+    var r = roles(t);
+    function barLine(label, pct, color) {
+      var w = 24, fill = Math.round(w * pct / 100);
+      var p = (pct < 10 ? '  ' : (pct < 100 ? ' ' : '')) + pct + '%';
+      return span(r.fg, ' ' + label + ' ') + styled('color:' + r.dim, '[') + styled('background:' + color, rep(' ', fill)) + styled('background:' + mix(t.bg, t.fg, 0.14), rep(' ', w - fill)) + styled('color:' + r.dim, p + ']');
+    }
+    var L = [];
+    L.push(span(r.brCyan, ' dev-box') + span(r.dim, '   up 4 days, 02:17   load ') + span(r.fg, '0.42 0.55 0.61'));
+    L.push(barLine('CPU', 62, r.green));
+    L.push(barLine('Mem', 47, r.yellow));
+    L.push(barLine('Swp', 8, r.red));
+    L.push('');
+    L.push(styled('background:' + r.brBlack + ';color:' + r.brWhite, '   PID USER      CPU%  MEM%  COMMAND                '));
+    L.push(span(r.dim, '  1842 ') + span(r.fg, 'ian      ') + span(r.green, '24.0') + span(r.fg, '   3.1  ') + span(r.brGreen, 'node') + span(r.fg, ' server.js'));
+    L.push(span(r.dim, '   991 ') + span(r.fg, 'ian       ') + span(r.green, '6.4') + span(r.fg, '   1.1  ') + span(r.fg, 'zsh'));
+    L.push(styled('background:' + t.selection + ';color:' + t.selectionText, '  2210 root      2.1   0.5  dockerd                '));
+    L.push(span(r.dim, '   117 ') + span(r.fg, 'ian       ') + span(r.green, '1.0') + span(r.fg, '   0.8  ') + span(r.brBlue, 'nvim') + span(r.fg, ' config.js'));
+    L.push(span(r.dim, '   642 ') + span(r.fg, 'ian       ') + span(r.green, '0.7') + span(r.fg, '   2.4  ') + span(r.magenta, 'postgres'));
+    L.push('');
+    L.push(span(r.brBlack, 'F1') + span(r.fg, 'Help  ') + span(r.brBlack, 'F6') + span(r.fg, 'SortBy  ') + span(r.brBlack, 'F9') + span(r.fg, 'Kill  ') + span(r.brBlack, 'F10') + span(r.fg, 'Quit') + cursorBlock(t));
+    return L;
+  }
+  function sceneLogs(t) {
+    var r = roles(t);
+    function lv(name, color) { return styled('color:' + color + ';font-weight:600', name) + span(r.fg, ' '); }
+    function ts(s) { return span(r.dim, s + '  '); }
+    function code(c) { return span(c < 400 ? r.green : r.red, ' ' + c + ' '); }
+    var L = [];
+    L.push(ts('09:14:02') + lv('INFO ', r.brGreen) + span(r.fg, 'server listening on ') + span(r.brCyan, ':8080'));
+    L.push(ts('09:14:02') + lv('DEBUG', r.brBlack) + span(r.dim, 'loaded 42 routes, 3 middlewares'));
+    L.push(ts('09:14:05') + lv('INFO ', r.brGreen) + span(r.brBlue, 'GET ') + span(r.fg, '/api/themes') + code(200) + span(r.dim, '12ms'));
+    L.push(ts('09:14:06') + lv('WARN ', r.brYellow) + span(r.fg, 'slow query ') + span(r.yellow, '340ms') + span(r.fg, ' on themes.list'));
+    L.push(ts('09:14:07') + lv('ERROR', r.brRed) + span(r.fg, 'upstream timeout ') + span(r.red, 'cache:6379'));
+    L.push(ts('09:14:07') + lv('INFO ', r.brGreen) + span(r.fg, 'retry ') + span(r.brYellow, '1/3') + span(r.fg, ' in 200ms'));
+    L.push(ts('09:14:08') + lv('DEBUG', r.brBlack) + span(r.dim, 'cache reconnected'));
+    L.push(ts('09:14:09') + lv('INFO ', r.brGreen) + span(r.brBlue, 'GET ') + span(r.fg, '/api/themes/dracula') + code(200) + span(r.dim, '4ms'));
+    L.push(ts('09:14:11') + lv('WARN ', r.brYellow) + span(r.fg, 'deprecated endpoint ') + span(r.yellow, '/v1/list'));
+    L.push(ts('09:14:12') + lv('ERROR', r.brRed) + span(r.brBlue, 'POST ') + span(r.fg, '/api/export') + code(500) + span(r.red, 'panic'));
+    L.push(ts('09:14:12') + lv('INFO ', r.brGreen) + span(r.brBlue, 'GET ') + span(r.fg, '/healthz') + code(200) + span(r.dim, '1ms'));
+    L.push(span(r.dim, '~ ') + span(r.fg, 'tail -f app.log') + cursorBlock(t));
+    return L;
+  }
+
+  var SCENES = [
+    { key: 'shell', label: 'shell', title: 'zsh', build: sceneShell },
+    { key: 'code', label: 'code', title: 'nvim config.js', build: sceneCode },
+    { key: 'system', label: 'system', title: 'htop', build: sceneSystem },
+    { key: 'logs', label: 'logs', title: 'journalctl -f', build: sceneLogs }
+  ];
+  var currentScene = 'shell';
+  function sceneDef() {
+    for (var i = 0; i < SCENES.length; i++) if (SCENES[i].key === currentScene) return SCENES[i];
+    return SCENES[0];
+  }
+
+  function buildPreview(t) {
+    var sc = sceneDef(), lines = sc.build(t);
+    var frame = document.createElement('div');
+    frame.className = 'preview';
+    frame.innerHTML =
+      '<div class="titlebar">' +
+        '<span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>' +
+        '<span class="ttl">' + esc(t.name) + ' — ' + esc(sc.title) + '</span>' +
+      '</div>' +
+      '<div class="term" style="background:' + t.bg + ';color:' + t.fg + '">' +
+        lines.map(function (l) { return '<span class="row">' + l + '</span>'; }).join('') +
+      '</div>';
+    return frame;
+  }
+
+  // scene switcher: views register how to re-render their preview(s)
+  var sceneRerender = null;
+  function syncSceneTabs() {
+    var btns = document.querySelectorAll('.scene-switch button');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.toggle('active', btns[i].getAttribute('data-scene') === currentScene);
+    }
+  }
+  function setScene(key) {
+    if (key === currentScene) return;
+    currentScene = key;
+    syncSceneTabs();
+    if (sceneRerender) sceneRerender();
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.scene-switch button') : null;
+    if (b) setScene(b.getAttribute('data-scene'));
+  });
+
+  // ---- Reference blocks ----
+  var ANSI_NAMES = [
+    '0 black', '1 red', '2 green', '3 yellow',
+    '4 blue', '5 magenta', '6 cyan', '7 white',
+    '8 br-black', '9 br-red', '10 br-green', '11 br-yellow',
+    '12 br-blue', '13 br-magenta', '14 br-cyan', '15 br-white'
+  ];
+
+  function refItem(label, hex) {
+    if (!hex) {
+      return '<div class="ref-item empty">' +
+        '<span class="sw empty"></span>' +
+        '<span class="rl">' + esc(label) + '</span>' +
+        '<span class="rh">&mdash;</span>' +
+      '</div>';
+    }
+    return '<div class="ref-item">' +
+      '<span class="sw" style="background:' + hex + '"></span>' +
+      '<span class="rl">' + esc(label) + '</span>' +
+      '<span class="rh">' + esc(hex) + '</span>' +
+    '</div>';
+  }
+
+  // ---- WCAG contrast (colours already sRGB at build time) ----
+  function relLum(hex) {
+    return hexToRgb(hex).map(function (v) {
+      v /= 255;
+      return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    }).reduce(function (acc, lin, i) {
+      return acc + [0.2126, 0.7152, 0.0722][i] * lin;
+    }, 0);
+  }
+  function contrastRatio(a, b) {
+    var l1 = relLum(a), l2 = relLum(b);
+    return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+  }
+  // WCAG: AA normal >=4.5, AAA >=7, AA large/bold >=3.
+  function contrastBadge(r) {
+    if (r >= 7) return { label: 'AAA', cls: 'cb-aaa' };
+    if (r >= 4.5) return { label: 'AA', cls: 'cb-aa' };
+    if (r >= 3) return { label: 'AA Large', cls: 'cb-lg' };
+    return { label: 'Fail', cls: 'cb-fail' };
+  }
+  function contrastItem(label, hex, bg) {
+    if (!hex) return refItem(label, hex);
+    var r = contrastRatio(hex, bg), b = contrastBadge(r);
+    return '<div class="ref-item">' +
+      '<span class="sw" style="background:' + hex + '"></span>' +
+      '<span class="rl">' + esc(label) + '</span>' +
+      '<span class="cratio">' + r.toFixed(1) + ':1</span>' +
+      '<span class="cbadge ' + b.cls + '">' + b.label + '</span>' +
+    '</div>';
+  }
+  // contrast of fg + each ANSI colour against the theme background.
+  // tag: optional header pill (the editor passes "computed" to flag it read-only)
+  function contrastBlockHtml(t, tag) {
+    var html = contrastItem('fg', t.fg, t.bg);
+    for (var j = 0; j < 16; j++) html += contrastItem(ANSI_NAMES[j], t.ansi[j], t.bg);
+    return '<div class="block">' +
+      '<p class="ref-h">Contrast on bg (WCAG)' +
+        (tag ? '<span class="rh-tag computed">' + tag + '</span>' : '') + '</p>' +
+      '<div class="contrast-grid">' + html + '</div>' +
+    '</div>';
+  }
+
+  function buildRefs(t) {
+    var ansiHtml = '';
+    for (var i = 0; i < 16; i++) {
+      ansiHtml += refItem(ANSI_NAMES[i], t.ansi[i]);
+    }
+    var uiRows = [
+      ['bg', t.bg], ['fg', t.fg],
+      ['cursor', t.cursor], ['cursor text', t.cursorText],
+      ['selection', t.selection], ['selected text', t.selectionText],
+      ['bold', t.bold], ['link', t.link]
+    ];
+    var uiHtml = uiRows.map(function (r) { return refItem(r[0], r[1]); }).join('');
+
+    var wrap = document.createElement('div');
+    wrap.className = 'refs';
+    wrap.innerHTML =
+      '<div class="block">' +
+        '<p class="ref-h">ANSI palette</p>' +
+        '<div class="ansi-grid">' + ansiHtml + '</div>' +
+      '</div>' +
+      '<div class="block">' +
+        '<p class="ref-h">UI colors</p>' +
+        '<div class="ui-grid">' + uiHtml + '</div>' +
+      '</div>' +
+      contrastBlockHtml(t);
+    return wrap;
+  }
+
+  // ---- Modal open / close / deep-link ----
+  var backdrop = document.getElementById('backdrop');
+  var modal = document.getElementById('modal');
+  var modalName = document.getElementById('modalName');
+  var modalTag = document.getElementById('modalTag');
+  var modalSrc = document.getElementById('modalSrc');
+  var modalBody = document.getElementById('modalBody');
+  var currentDetail = null;
+
+  function openDetail(t, setHash) {
+    currentDetail = t;
+    modalName.textContent = t.name;
+    modalTag.textContent = t.variant;
+    modalTag.className = 'tag ' + t.variant;
+    modalSrc.textContent = t.source;
+    modalBody.innerHTML = '';
+    var pw = document.createElement('div');
+    pw.appendChild(buildPreview(t));
+    modalBody.appendChild(pw);
+    modalBody.appendChild(buildRefs(t));
+    sceneRerender = function () { pw.innerHTML = ''; pw.appendChild(buildPreview(t)); };
+    syncSceneTabs();
+    // make the detail view about just this theme: opaque, theme-tinted backdrop
+    // + chrome that matches the theme's light/dark variant.
+    backdrop.style.background = t.bg;
+    modal.classList.toggle('light', t.variant === 'light');
+    backdrop.classList.add('open');
+    if (setHash) location.hash = '#' + slug(t.name);
+  }
+
+  function closeDetail() {
+    backdrop.classList.remove('open');
+    if (location.hash) {
+      // clear hash without adding history noise
+      history.replaceState(null, '', location.pathname + location.search);
+    }
+  }
+
+  document.getElementById('modalClose').addEventListener('click', closeDetail);
+  backdrop.addEventListener('click', function (e) {
+    if (e.target === backdrop) closeDetail();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (document.body.classList.contains('view-edit')) {
+      // let Escape blur a field (name/hex/colour) instead of leaving mid-type
+      if (e.target && e.target.tagName === 'INPUT') { e.target.blur(); return; }
+      exitEdit(); return;
+    }
+    if (document.body.classList.contains('view-compare')) { exitCompare(); return; }
+    if (backdrop.classList.contains('open')) closeDetail();
+  });
+
+  // ---- Compare: two pickers, two live previews (full-screen, hash-routed) ----
+  var cmpColA = document.getElementById('cmpColA');
+  var cmpColB = document.getElementById('cmpColB');
+  var cmpPaneA = document.getElementById('cmpPaneA');
+  var cmpPaneB = document.getElementById('cmpPaneB');
+
+  // Typeable theme picker: an input + a filtered dropdown (a native <select>
+  // can't filter as you type). Reuses fuzzy(). onPick(idx) fires on selection.
+  function makeCombo(rootId, onPick) {
+    var root = document.getElementById(rootId);
+    var input = root.querySelector('.combo-input');
+    var list = root.querySelector('.combo-list');
+    var selIdx = 0, active = -1;
+
+    function opts() { return list.querySelectorAll('.combo-opt'); }
+    function optHtml(t, i) {
+      return '<div class="combo-opt" data-idx="' + i + '"' +
+        (i === selIdx ? ' aria-selected="true"' : '') + '>' +
+        '<span class="co-name">' + esc(t.name) + '</span></div>';
+    }
+    function renderList(query) {
+      var q = query || '', html = '', any = false;
+      [['dark', 'Dark'], ['light', 'Light']].forEach(function (g) {
+        var rows = '';
+        themes.forEach(function (t, i) {
+          if (t.variant === g[0] && fuzzy(q, t.name)) rows += optHtml(t, i);
+        });
+        if (rows) { html += '<div class="combo-group">' + g[1] + '</div>' + rows; any = true; }
+      });
+      list.innerHTML = any ? html : '<div class="combo-empty">no match</div>';
+      active = -1;
+    }
+    function open() { renderList(''); list.classList.add('open'); }
+    function close() { list.classList.remove('open'); input.value = themes[selIdx].name; }
+    function pick(i) {
+      selIdx = i;
+      input.value = themes[i].name;
+      list.classList.remove('open');
+      onPick(i);
+    }
+    function highlight(r) {
+      for (var i = 0; i < r.length; i++) r[i].classList.toggle('active', i === active);
+      if (active >= 0 && r[active]) r[active].scrollIntoView({ block: 'nearest' });
+    }
+
+    input.addEventListener('focus', function () { input.select(); open(); });
+    input.addEventListener('input', function () {
+      list.classList.add('open');
+      renderList(input.value);
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (!list.classList.contains('open')) open();
+        var r = opts(); active = Math.min(active + 1, r.length - 1); highlight(r);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        var u = opts(); active = Math.max(active - 1, 0); highlight(u);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        var en = opts();
+        if (active >= 0 && en[active]) pick(+en[active].getAttribute('data-idx'));
+        else if (en.length === 1) pick(+en[0].getAttribute('data-idx'));
+      } else if (e.key === 'Escape') {
+        if (list.classList.contains('open')) { e.stopPropagation(); close(); }
+      }
+    });
+    list.addEventListener('mousedown', function (e) {
+      var opt = e.target.closest ? e.target.closest('.combo-opt') : null;
+      if (opt) { e.preventDefault(); pick(+opt.getAttribute('data-idx')); }
+    });
+    input.addEventListener('blur', function () { setTimeout(close, 120); });
+
+    return {
+      set: function (i) { selIdx = i; input.value = themes[i].name; },
+      get: function () { return selIdx; }
+    };
+  }
+
+  function renderPane(pane, idx) {
+    pane.innerHTML = '';
+    pane.appendChild(buildPreview(themes[idx]));
+    pane.appendChild(buildRefs(themes[idx]));
+  }
+  // Derive chrome (surfaces, borders, dim text) from a theme's own bg/fg so each
+  // compare column is tinted to its theme, not a fixed light/dark palette.
+  function hexToRgb(h) {
+    h = h.replace('#', '');
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+  }
+  function hx(n) { n = Math.round(Math.max(0, Math.min(255, n))); return (n < 16 ? '0' : '') + n.toString(16); }
+  function mix(c1, c2, t) {
+    var a = hexToRgb(c1), b = hexToRgb(c2);
+    return '#' + hx(a[0] + (b[0] - a[0]) * t) + hx(a[1] + (b[1] - a[1]) * t) + hx(a[2] + (b[2] - a[2]) * t);
+  }
+  function rgba(hex, alpha) {
+    var c = hexToRgb(hex);
+    return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + alpha + ')';
+  }
+  function applyColumn(col, t) {
+    var bg = t.bg, fg = t.fg, s = col.style;
+    s.background = bg;
+    s.setProperty('--c-bg', bg);
+    s.setProperty('--c-surface', mix(bg, fg, 0.07));
+    s.setProperty('--c-border', mix(bg, fg, 0.18));
+    s.setProperty('--c-border-soft', mix(bg, fg, 0.12));
+    s.setProperty('--c-text', mix(bg, fg, 0.88));
+    s.setProperty('--c-text-strong', fg);
+    s.setProperty('--c-text-dim', mix(bg, fg, 0.5));
+    s.setProperty('--c-btn-border', mix(bg, fg, 0.28));
+    s.setProperty('--c-hover', mix(bg, fg, 0.13));
+    s.setProperty('--c-hatch-a', mix(bg, fg, 0.18));
+    s.setProperty('--c-hatch-b', mix(bg, fg, 0.10));
+    s.setProperty('--c-sw-border', rgba(fg, 0.18));
+  }
+  function renderCompare() {
+    applyColumn(cmpColA, themes[comboA.get()]);
+    applyColumn(cmpColB, themes[comboB.get()]);
+    renderPane(cmpPaneA, comboA.get());
+    renderPane(cmpPaneB, comboB.get());
+  }
+  function compareHash() {
+    return '#compare=' + slug(themes[comboA.get()].name) +
+      ',' + slug(themes[comboB.get()].name);
+  }
+  // picker change: re-render and update the URL silently (no navigation)
+  function onPickCompare() {
+    renderCompare();
+    history.replaceState(null, '', compareHash());
+  }
+  var comboA = makeCombo('comboA', onPickCompare);
+  var comboB = makeCombo('comboB', onPickCompare);
+
+  function showCompare(aIdx, bIdx) {
+    if (backdrop.classList.contains('open')) closeDetail();
+    hideEdit();
+    comboA.set(aIdx);
+    comboB.set(bIdx);
+    renderCompare();
+    sceneRerender = function () { renderPane(cmpPaneA, comboA.get()); renderPane(cmpPaneB, comboB.get()); };
+    syncSceneTabs();
+    document.body.classList.add('view-compare');
+    window.scrollTo(0, 0);
+  }
+  function hideCompare() { document.body.classList.remove('view-compare'); }
+  function exitCompare() {
+    hideCompare();
+    history.replaceState(null, '', location.pathname + location.search);
+  }
+  // navigate to the compare view (adds a history entry; the router shows it)
+  function goCompare(aIdx, bIdx) {
+    location.hash = '#compare=' + slug(themes[aIdx].name) + ',' + slug(themes[bIdx].name);
+  }
+
+  // open compare with the same theme on both sides — no jarring dark-vs-light
+  // mismatch on first open; the user picks the second theme themselves.
+  document.getElementById('cmpBtn').addEventListener('click', function () {
+    goCompare(0, 0);
+  });
+  document.getElementById('cmpBack').addEventListener('click', exitCompare);
+
+  // open compare from a theme's detail view, seeding both sides with that theme
+  document.getElementById('detailCmp').addEventListener('click', function () {
+    var aIdx = themes.indexOf(currentDetail);
+    if (aIdx < 0) aIdx = 0;
+    goCompare(aIdx, aIdx);
+  });
+
+  // ---- Editor: left = frozen "before", right = editable "working" ----
+  var editColA = document.getElementById('editColA');
+  var editColB = document.getElementById('editColB');
+  var editPaneA = document.getElementById('editPaneA');
+  var editPreview = document.getElementById('editPreview');
+  var editControls = document.getElementById('editControls');
+  var editContrast = document.getElementById('editContrast');
+  var editName = document.getElementById('editName');
+  var editNameInput = document.getElementById('editNameInput');
+  var editOrig = null, draft = null;
+
+  function cloneTheme(t) {
+    var c = {};
+    for (var k in t) if (t.hasOwnProperty(k)) c[k] = t[k];
+    c.ansi = t.ansi.slice();
+    return c;
+  }
+  function setRole(d, role, val) {
+    if (role.indexOf('ansi') === 0) d.ansi[+role.slice(4)] = val;
+    else d[role] = val;
+  }
+  // accept #rgb / #rrggbb (with or without #); return normalised #rrggbb or null
+  function normHex(s) {
+    s = String(s).trim().replace(/^#/, '');
+    if (/^[0-9a-fA-F]{3}$/.test(s)) s = s[0] + s[0] + s[1] + s[1] + s[2] + s[2];
+    return /^[0-9a-fA-F]{6}$/.test(s) ? '#' + s.toLowerCase() : null;
+  }
+  function editRow(role, label, val, fallback) {
+    var sw = val || fallback || '#000000';
+    return '<div class="ref-item edit-item">' +
+      '<input type="color" class="sw-input" data-role="' + role + '" value="' + sw + '">' +
+      '<span class="rl">' + esc(label) + '</span>' +
+      '<input type="text" class="hex-input" data-role="' + role + '" value="' + (val || '') + '" ' +
+        'maxlength="7" spellcheck="false" autocomplete="off" placeholder="—" ' +
+        'aria-label="' + esc(label) + ' hex">' +
+    '</div>';
+  }
+  function buildEditControls(d) {
+    var ansiHtml = '';
+    for (var i = 0; i < 16; i++) ansiHtml += editRow('ansi' + i, ANSI_NAMES[i], d.ansi[i]);
+    var uiRows = [
+      ['bg', 'bg'], ['fg', 'fg'],
+      ['cursor', 'cursor'], ['cursorText', 'cursor text'],
+      ['selection', 'selection'], ['selectionText', 'selected text'],
+      ['bold', 'bold'], ['link', 'link']
+    ];
+    var uiHtml = uiRows.map(function (r) { return editRow(r[0], r[1], d[r[0]], d.fg); }).join('');
+    return '<div class="refs">' +
+      '<div class="block"><p class="ref-h">ANSI palette<span class="rh-tag edit">editable</span></p>' +
+        '<div class="ansi-grid">' + ansiHtml + '</div></div>' +
+      '<div class="block"><p class="ref-h">UI colors<span class="rh-tag edit">editable</span></p>' +
+        '<div class="ui-grid">' + uiHtml + '</div></div>' +
+    '</div>';
+  }
+  // re-render only preview + contrast (+ live re-tint); the inputs persist so a
+  // colour-picker drag keeps focus
+  function refreshWorking() {
+    applyColumn(editColB, draft);
+    editPreview.innerHTML = '';
+    editPreview.appendChild(buildPreview(draft));
+    editContrast.innerHTML = contrastBlockHtml(draft, 'computed');
+  }
+  editControls.addEventListener('input', function (e) {
+    var el = e.target, role = el.getAttribute && el.getAttribute('data-role');
+    if (!role) return;
+    if (el.classList.contains('sw-input')) {
+      setRole(draft, role, el.value);
+      var hex = el.parentNode.querySelector('.hex-input');
+      if (hex) hex.value = el.value;
+      refreshWorking();
+    } else if (el.classList.contains('hex-input')) {
+      var v = normHex(el.value);
+      if (!v) return;
+      setRole(draft, role, v);
+      var sw = el.parentNode.querySelector('.sw-input');
+      if (sw) sw.value = v;
+      refreshWorking();
+    }
+  });
+
+  // open the editor on any theme object (corpus theme or imported)
+  function enterEditor(t) {
+    if (backdrop.classList.contains('open')) closeDetail();
+    hideCompare();
+    editOrig = t;
+    draft = cloneTheme(t);
+    editName.textContent = t.name;
+    editNameInput.value = t.name;
+    // left: the frozen original
+    applyColumn(editColA, t);
+    editPaneA.innerHTML = '';
+    editPaneA.appendChild(buildPreview(t));
+    editPaneA.appendChild(buildRefs(t));
+    // right: the editable working draft
+    editControls.innerHTML = buildEditControls(draft);
+    refreshWorking();
+    sceneRerender = function () {
+      editPaneA.innerHTML = '';
+      editPaneA.appendChild(buildPreview(editOrig));
+      editPaneA.appendChild(buildRefs(editOrig));
+      refreshWorking();
+    };
+    syncSceneTabs();
+    document.body.classList.add('view-edit');
+    window.scrollTo(0, 0);
+  }
+  function showEdit(idx) { enterEditor(themes[idx]); }
+  function hideEdit() { document.body.classList.remove('view-edit'); }
+  function exitEdit() {
+    hideEdit();
+    history.replaceState(null, '', location.pathname + location.search);
+  }
+  function goEdit(idx) { location.hash = '#edit=' + slug(themes[idx].name); }
+
+  document.getElementById('editBack').addEventListener('click', exitEdit);
+  editNameInput.addEventListener('input', function () {
+    draft.name = editNameInput.value;
+    var ttl = editPreview.querySelector('.ttl');
+    if (ttl) ttl.textContent = (draft.name || 'untitled') + ' — zsh';
+  });
+  document.getElementById('editReset').addEventListener('click', function () {
+    if (!editOrig) return;
+    draft = cloneTheme(editOrig);
+    editNameInput.value = draft.name;
+    editControls.innerHTML = buildEditControls(draft);
+    refreshWorking();
+  });
+
+  // ---- Saved themes (localStorage; per-browser, survives reloads) ----
+  var SAVED_KEY = 'themelab.saved.v1';
+  function loadSaved() {
+    try { return JSON.parse(localStorage.getItem(SAVED_KEY)) || []; }
+    catch (e) { return []; }
+  }
+  function writeSaved(list) {
+    try { localStorage.setItem(SAVED_KEY, JSON.stringify(list)); return true; }
+    catch (e) { alert('Could not save — browser storage is full or blocked.'); return false; }
+  }
+  function newId() { return 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  // save the current draft; re-saving updates its entry instead of duplicating
+  function saveDraft() {
+    var entry = cloneTheme(draft);
+    entry.name = entry.name || 'Untitled';
+    entry._savedAt = Date.now();
+    var list = loadSaved();
+    if (draft._id) {
+      entry._id = draft._id;
+      var i = list.findIndex(function (s) { return s._id === draft._id; });
+      if (i >= 0) list[i] = entry; else list.push(entry);
+    } else {
+      entry._id = newId();
+      draft._id = entry._id;
+      list.push(entry);
+    }
+    if (!writeSaved(list)) return false;
+    renderGrid();
+    return true;
+  }
+  function deleteSaved(id) {
+    writeSaved(loadSaved().filter(function (s) { return s._id !== id; }));
+    renderGrid();
+  }
+  var editSave = document.getElementById('editSave');
+  editSave.addEventListener('click', function () {
+    if (draft && saveDraft()) {
+      editSave.textContent = 'saved ✓';
+      setTimeout(function () { editSave.textContent = 'save'; }, 1300);
+    }
+  });
+  document.getElementById('detailEdit').addEventListener('click', function () {
+    var idx = themes.indexOf(currentDetail);
+    if (idx < 0) idx = 0;
+    goEdit(idx);
+  });
+
+  // ---- Export: serialise a theme to several terminal formats ----
+  function download(filename, text, mime) {
+    var blob = new Blob([text], { type: (mime || 'text/plain') + ';charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+  function up(hex) { return String(hex).toUpperCase(); }
+
+  // iTerm2 .itermcolors (plist). Colours are sRGB at build time, so tag sRGB.
+  function itermColor(hex) {
+    var c = hexToRgb(hex);
+    return '\t<dict>\n' +
+      '\t\t<key>Color Space</key>\n\t\t<string>sRGB</string>\n' +
+      '\t\t<key>Alpha Component</key>\n\t\t<real>1</real>\n' +
+      '\t\t<key>Red Component</key>\n\t\t<real>' + (c[0] / 255) + '</real>\n' +
+      '\t\t<key>Green Component</key>\n\t\t<real>' + (c[1] / 255) + '</real>\n' +
+      '\t\t<key>Blue Component</key>\n\t\t<real>' + (c[2] / 255) + '</real>\n' +
+      '\t</dict>';
+  }
+  function toIterm(t) {
+    var rows = [];
+    for (var i = 0; i < 16; i++) rows.push('\t<key>Ansi ' + i + ' Color</key>\n' + itermColor(t.ansi[i]));
+    rows.push('\t<key>Background Color</key>\n' + itermColor(t.bg));
+    rows.push('\t<key>Foreground Color</key>\n' + itermColor(t.fg));
+    if (t.bold) rows.push('\t<key>Bold Color</key>\n' + itermColor(t.bold));
+    rows.push('\t<key>Cursor Color</key>\n' + itermColor(t.cursor));
+    rows.push('\t<key>Cursor Text Color</key>\n' + itermColor(t.cursorText));
+    rows.push('\t<key>Selection Color</key>\n' + itermColor(t.selection));
+    rows.push('\t<key>Selected Text Color</key>\n' + itermColor(t.selectionText));
+    if (t.link) rows.push('\t<key>Link Color</key>\n' + itermColor(t.link));
+    return '<?xml version="1.0" encoding="UTF-8"?>\n' +
+      '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n' +
+      '<plist version="1.0">\n<dict>\n' + rows.join('\n') + '\n</dict>\n</plist>\n';
+  }
+  function toJson(t) {
+    return JSON.stringify({
+      name: t.name, variant: t.variant,
+      bg: t.bg, fg: t.fg, cursor: t.cursor, cursorText: t.cursorText,
+      selection: t.selection, selectionText: t.selectionText,
+      bold: t.bold, link: t.link, ansi: t.ansi
+    }, null, 2) + '\n';
+  }
+  function toAlacritty(t) {
+    var n = ['black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'];
+    function block(name, off) {
+      var s = '[colors.' + name + ']\n';
+      for (var i = 0; i < 8; i++) s += n[i] + ' = "' + t.ansi[off + i] + '"\n';
+      return s;
+    }
+    return '# ' + t.name + '\n' +
+      '[colors.primary]\nbackground = "' + t.bg + '"\nforeground = "' + t.fg + '"\n\n' +
+      '[colors.cursor]\ncursor = "' + t.cursor + '"\ntext = "' + t.cursorText + '"\n\n' +
+      '[colors.selection]\nbackground = "' + t.selection + '"\ntext = "' + t.selectionText + '"\n\n' +
+      block('normal', 0) + '\n' + block('bright', 8);
+  }
+  function toKitty(t) {
+    var s = '# ' + t.name + '\n' +
+      'background ' + t.bg + '\nforeground ' + t.fg + '\n' +
+      'cursor ' + t.cursor + '\ncursor_text_color ' + t.cursorText + '\n' +
+      'selection_background ' + t.selection + '\nselection_foreground ' + t.selectionText + '\n';
+    if (t.link) s += 'url_color ' + t.link + '\n';
+    s += '\n';
+    for (var i = 0; i < 16; i++) s += 'color' + i + ' ' + t.ansi[i] + '\n';
+    return s;
+  }
+  function toWindowsTerminal(t) {
+    return JSON.stringify({
+      name: t.name,
+      background: up(t.bg), foreground: up(t.fg),
+      cursorColor: up(t.cursor), selectionBackground: up(t.selection),
+      black: up(t.ansi[0]), red: up(t.ansi[1]), green: up(t.ansi[2]), yellow: up(t.ansi[3]),
+      blue: up(t.ansi[4]), purple: up(t.ansi[5]), cyan: up(t.ansi[6]), white: up(t.ansi[7]),
+      brightBlack: up(t.ansi[8]), brightRed: up(t.ansi[9]), brightGreen: up(t.ansi[10]),
+      brightYellow: up(t.ansi[11]), brightBlue: up(t.ansi[12]), brightPurple: up(t.ansi[13]),
+      brightCyan: up(t.ansi[14]), brightWhite: up(t.ansi[15])
+    }, null, 4) + '\n';
+  }
+  var EXPORT_FORMATS = [
+    { fmt: 'iterm', label: 'iTerm2 (.itermcolors)', fn: toIterm, ext: function (t) { return (t.name || 'theme') + '.itermcolors'; }, mime: 'application/xml' },
+    { fmt: 'json', label: 'JSON', fn: toJson, ext: function (t) { return (slug(t.name) || 'theme') + '.json'; }, mime: 'application/json' },
+    { fmt: 'alacritty', label: 'Alacritty (.toml)', fn: toAlacritty, ext: function (t) { return (slug(t.name) || 'theme') + '.toml'; }, mime: 'text/plain' },
+    { fmt: 'kitty', label: 'Kitty (.conf)', fn: toKitty, ext: function (t) { return (slug(t.name) || 'theme') + '.conf'; }, mime: 'text/plain' },
+    { fmt: 'wt', label: 'Windows Terminal (.json)', fn: toWindowsTerminal, ext: function (t) { return (slug(t.name) || 'theme') + '-windows-terminal.json'; }, mime: 'application/json' }
+  ];
+  var openExpMenu = null;
+  function closeExpMenu() { if (openExpMenu) { openExpMenu.classList.remove('open'); openExpMenu = null; } }
+  function buildExport(wrapId, getTheme) {
+    var wrap = document.getElementById(wrapId);
+    wrap.innerHTML =
+      '<button class="exp-btn" type="button">export &#9662;</button>' +
+      '<div class="exp-menu">' +
+        EXPORT_FORMATS.map(function (f) {
+          return '<button type="button" data-fmt="' + f.fmt + '">' + f.label + '</button>';
+        }).join('') +
+      '</div>';
+    var btn = wrap.querySelector('.exp-btn');
+    var menu = wrap.querySelector('.exp-menu');
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var willOpen = !menu.classList.contains('open');
+      closeExpMenu();
+      if (willOpen) { menu.classList.add('open'); openExpMenu = menu; }
+    });
+    menu.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-fmt]');
+      if (!b) return;
+      var t = getTheme();
+      var f = EXPORT_FORMATS.filter(function (x) { return x.fmt === b.getAttribute('data-fmt'); })[0];
+      if (t && f) download(f.ext(t), f.fn(t), f.mime);
+      closeExpMenu();
+    });
+  }
+  buildExport('detailExport', function () { return currentDetail; });
+  buildExport('editExport', function () { return draft; });
+  document.addEventListener('click', closeExpMenu);
+
+  // ---- Import: parse a .itermcolors / JSON file into the editor ----
+  // sRGB transfer + Display P3 -> sRGB, matching tools/build_themes.py so an
+  // imported theme renders the same as a corpus one.
+  function srgbToLinear(c) { return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+  function linearToSrgb(c) {
+    c = Math.max(0, Math.min(1, c));
+    return c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
+  }
+  var P3_TO_SRGB = [
+    [1.2249401, -0.2249404, 0.0],
+    [-0.0420569, 1.0420571, 0.0],
+    [-0.0196376, -0.0786361, 1.0982735]
+  ];
+  function p3ToSrgb(r, g, b) {
+    var lr = srgbToLinear(r), lg = srgbToLinear(g), lb = srgbToLinear(b);
+    return P3_TO_SRGB.map(function (row) { return linearToSrgb(row[0] * lr + row[1] * lg + row[2] * lb); });
+  }
+  function floatsToHex(r, g, b) { return '#' + hx(r * 255) + hx(g * 255) + hx(b * 255); }
+  function simpleLum(hex) {
+    var c = hexToRgb(hex);
+    return (0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]) / 255;
+  }
+  function niceName(fn) {
+    var stem = String(fn).replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ');
+    return (stem.split(/\s+/).map(function (w) {
+      return w === w.toLowerCase() ? w.charAt(0).toUpperCase() + w.slice(1) : w;
+    }).join(' ').trim()) || 'Imported';
+  }
+  function normalizeImported(t) {
+    t.bg = t.bg || '#000000';
+    t.fg = t.fg || '#ffffff';
+    t.ansi = (t.ansi || []).slice(0, 16);
+    for (var i = 0; i < 16; i++) if (!t.ansi[i]) t.ansi[i] = i < 8 ? '#000000' : '#808080';
+    t.cursor = t.cursor || t.fg;
+    t.cursorText = t.cursorText || t.bg;
+    t.selection = t.selection || mix(t.bg, t.fg, 0.25);
+    t.selectionText = t.selectionText || t.fg;
+    t.bold = t.bold || null;
+    t.link = t.link || null;
+    if (!t.variant) t.variant = simpleLum(t.bg) > 0.5 ? 'light' : 'dark';
+    return t;
+  }
+  // one iTerm colour <dict> -> #rrggbb (honours Color Space like the build)
+  function plistColorHex(dictEl) {
+    var kids = dictEl.children, m = {};
+    for (var i = 0; i + 1 < kids.length; i++) {
+      if (kids[i].tagName === 'key') m[kids[i].textContent] = kids[i + 1].textContent;
+    }
+    var r = parseFloat(m['Red Component'] || 0),
+        g = parseFloat(m['Green Component'] || 0),
+        b = parseFloat(m['Blue Component'] || 0);
+    var space = (m['Color Space'] || '').trim().toLowerCase();
+    if (space === 'p3' || space === 'display p3') { var c = p3ToSrgb(r, g, b); r = c[0]; g = c[1]; b = c[2]; }
+    return floatsToHex(r, g, b);
+  }
+  function parseIterm(text, name) {
+    var doc = new DOMParser().parseFromString(text, 'application/xml');
+    if (doc.querySelector('parsererror')) throw new Error('not valid XML');
+    var top = doc.querySelector('plist > dict') || doc.querySelector('dict');
+    if (!top) throw new Error('no <dict> found');
+    var kids = top.children, colors = {};
+    for (var i = 0; i + 1 < kids.length; i++) {
+      if (kids[i].tagName === 'key' && kids[i + 1].tagName === 'dict') {
+        colors[kids[i].textContent] = plistColorHex(kids[i + 1]);
+      }
+    }
+    var ansi = [];
+    for (var n = 0; n < 16; n++) ansi.push(colors['Ansi ' + n + ' Color'] || null);
+    return normalizeImported({
+      name: name, source: name + '.itermcolors',
+      bg: colors['Background Color'], fg: colors['Foreground Color'],
+      cursor: colors['Cursor Color'], cursorText: colors['Cursor Text Color'],
+      selection: colors['Selection Color'], selectionText: colors['Selected Text Color'],
+      bold: colors['Bold Color'] || null, link: colors['Link Color'] || null,
+      ansi: ansi
+    });
+  }
+  function parseJsonTheme(text, name) {
+    var o = JSON.parse(text);
+    if (!o || typeof o !== 'object') throw new Error('not a theme object');
+    if (!Array.isArray(o.ansi) || o.ansi.length < 16) throw new Error('missing ansi[16]');
+    o.name = o.name || name;
+    o.source = o.source || (name + '.json');
+    return normalizeImported(o);
+  }
+  function importFile(file) {
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        var text = String(reader.result), name = niceName(file.name);
+        var asJson = /\.json$/i.test(file.name) || /^\s*[{[]/.test(text);
+        enterEditor(asJson ? parseJsonTheme(text, name) : parseIterm(text, name));
+      } catch (err) {
+        alert('Could not import "' + file.name + '": ' + (err && err.message || err));
+      }
+    };
+    reader.readAsText(file);
+  }
+  var importInput = document.getElementById('importFile');
+  document.getElementById('importBtn').addEventListener('click', function () { importInput.click(); });
+  importInput.addEventListener('change', function () {
+    if (importInput.files && importInput.files[0]) importFile(importInput.files[0]);
+    importInput.value = ''; // allow re-importing the same file
+  });
+  // drag-and-drop a theme file anywhere on the window
+  var dropDepth = 0;
+  function hasFiles(e) {
+    return e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types || [], 'Files') >= 0;
+  }
+  window.addEventListener('dragenter', function (e) {
+    if (!hasFiles(e)) return;
+    dropDepth++; document.body.classList.add('dragging');
+  });
+  window.addEventListener('dragover', function (e) { if (hasFiles(e)) e.preventDefault(); });
+  window.addEventListener('dragleave', function () {
+    dropDepth = Math.max(0, dropDepth - 1);
+    if (!dropDepth) document.body.classList.remove('dragging');
+  });
+  window.addEventListener('drop', function (e) {
+    e.preventDefault();
+    dropDepth = 0; document.body.classList.remove('dragging');
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) importFile(e.dataTransfer.files[0]);
+  });
+
+  var gallery = document.getElementById('gallery');
+  var searchInput = document.getElementById('search');
+  var countEl = document.getElementById('count');
+  var nDark = themes.filter(function (t) { return t.variant === 'dark'; }).length;
+  var nLight = themes.length - nDark;
+
+  // fuzzy = subsequence match on the alphanumerics of the name (order-preserving,
+  // punctuation/space-insensitive). "tnmoon" matches "Tokyonight Moon".
+  function norm(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, ''); }
+  function fuzzy(query, name) {
+    var q = norm(query);
+    if (!q) return true;
+    var s = norm(name), i = 0;
+    for (var j = 0; j < s.length && i < q.length; j++) {
+      if (s[j] === q[i]) i++;
+    }
+    return i === q.length;
+  }
+
+  function renderSection(title, list, variant) {
+    var grid = document.createElement('div');
+    grid.className = 'grid';
+    list.forEach(function (t) {
+      var el = card(t);
+      el.addEventListener('click', function () { openDetail(t, true); });
+      grid.appendChild(el);
+    });
+    var sec = document.createElement('section');
+    sec.className = 'section section-' + variant;
+    sec.innerHTML = '<h2 class="section-h">' + title +
+      '<span class="n">' + list.length + '</span></h2>';
+    sec.appendChild(grid);
+    return sec;
+  }
+  // a saved-theme card: opens in the editor (not the read-only detail) + delete
+  function disarmDeletes() {
+    Array.prototype.forEach.call(document.querySelectorAll('.saved-del.confirm'), function (b) {
+      b.classList.remove('confirm'); b.textContent = 'delete'; clearTimeout(b._t);
+    });
+  }
+  function savedCard(t) {
+    var el = card(t);
+    el.classList.add('saved-card');
+    var del = document.createElement('button');
+    del.className = 'saved-del';
+    del.type = 'button';
+    del.textContent = 'delete';
+    // two-step confirm: first click arms ("delete?"), second deletes; auto-reverts
+    del.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (del.classList.contains('confirm')) { deleteSaved(t._id); return; }
+      disarmDeletes();
+      del.classList.add('confirm');
+      del.textContent = 'delete?';
+      del._t = setTimeout(function () {
+        del.classList.remove('confirm'); del.textContent = 'delete';
+      }, 3000);
+    });
+    el.appendChild(del);
+    el.addEventListener('click', function () { enterEditor(t); });
+    return el;
+  }
+  function renderSavedSection(list) {
+    var grid = document.createElement('div');
+    grid.className = 'grid';
+    list.forEach(function (t) { grid.appendChild(savedCard(t)); });
+    var sec = document.createElement('section');
+    sec.className = 'section section-saved';
+    sec.innerHTML = '<h2 class="section-h">Saved<span class="n">' + list.length + '</span></h2>';
+    sec.appendChild(grid);
+    return sec;
+  }
+  var variantFilter = 'all';
+  var a11yOnly = false;
+  function passesAA(t) { return contrastRatio(t.fg, t.bg) >= 4.5; }
+  function renderGrid() {
+    var q = searchInput.value;
+    var saved = loadSaved().filter(function (t) { return fuzzy(q, t.name); });
+    var dark = themes.filter(function (t) { return t.variant === 'dark' && fuzzy(q, t.name); });
+    var light = themes.filter(function (t) { return t.variant === 'light' && fuzzy(q, t.name); });
+    if (variantFilter === 'dark') light = [];
+    if (variantFilter === 'light') dark = [];
+    if (a11yOnly) { dark = dark.filter(passesAA); light = light.filter(passesAA); }
+    gallery.innerHTML = '';
+    if (saved.length) gallery.appendChild(renderSavedSection(saved));
+    if (dark.length) gallery.appendChild(renderSection('Dark', dark, 'dark'));
+    if (light.length) gallery.appendChild(renderSection('Light', light, 'light'));
+    var shown = dark.length + light.length;
+    countEl.textContent = (q.trim() || variantFilter !== 'all' || a11yOnly)
+      ? shown + ' of ' + themes.length + (shown === 1 ? ' theme' : ' themes')
+      : themes.length + ' themes  ' + nDark + ' dark  ' + nLight + ' light';
+  }
+
+  var variantSeg = document.getElementById('variantSeg');
+  variantSeg.addEventListener('click', function (e) {
+    var btn = e.target.closest('button');
+    if (!btn) return;
+    variantFilter = btn.getAttribute('data-v');
+    document.body.classList.toggle('page-light', variantFilter === 'light');
+    Array.prototype.forEach.call(variantSeg.children, function (b) {
+      b.classList.toggle('active', b === btn);
+    });
+    renderGrid();
+  });
+  var a11yToggle = document.getElementById('a11yToggle');
+  a11yToggle.addEventListener('click', function () {
+    a11yOnly = !a11yOnly;
+    a11yToggle.classList.toggle('active', a11yOnly);
+    a11yToggle.setAttribute('aria-pressed', a11yOnly ? 'true' : 'false');
+    renderGrid();
+  });
+
+  // debounce: with ~500 themes, rebuilding the grid on every keystroke can lag
+  var searchTimer;
+  searchInput.addEventListener('input', function () {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(renderGrid, 110);
+  });
+  renderGrid();
+
+  // ---- Routing: the hash drives gallery / compare / detail ----
+  function route() {
+    var h = location.hash.replace(/^#/, '');
+    if (h.indexOf('compare=') === 0) {
+      var parts = h.slice('compare='.length).split(',');
+      var ai = themes.findIndex(function (t) { return slug(t.name) === parts[0]; });
+      var bi = themes.findIndex(function (t) { return slug(t.name) === parts[1]; });
+      if (ai >= 0 && bi >= 0) { showCompare(ai, bi); return; }
+    }
+    if (h.indexOf('edit=') === 0) {
+      var es = h.slice('edit='.length);
+      var ei = themes.findIndex(function (t) { return slug(t.name) === es; });
+      if (ei >= 0) { showEdit(ei); return; }
+    }
+    hideCompare(); // any non-compare route leaves the compare view
+    hideEdit();    // ...and the editor
+    if (h) {
+      for (var i = 0; i < themes.length; i++) {
+        if (slug(themes[i].name) === h) { openDetail(themes[i], false); return; }
+      }
+    }
+    if (backdrop.classList.contains('open')) closeDetail();
+  }
+  window.addEventListener('hashchange', route);
+  route();
+})();
+</script>
+</body>
+</html>
