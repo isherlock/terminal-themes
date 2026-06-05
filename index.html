@@ -1931,11 +1931,22 @@
     renderGrid();
   });
 
+  // reflect the search box in the URL (gallery view only) so it's deep-linkable;
+  // replaceState doesn't fire hashchange, so this won't re-trigger route()
+  function syncSearchHash() {
+    if (document.body.classList.contains('view-compare') ||
+        document.body.classList.contains('view-edit') ||
+        backdrop.classList.contains('open')) return;
+    var q = searchInput.value.trim();
+    var base = location.pathname + location.search;
+    history.replaceState(null, '', q ? base + '#search=' + encodeURIComponent(q) : base);
+  }
+
   // debounce: with ~500 themes, rebuilding the grid on every keystroke can lag
   var searchTimer;
   searchInput.addEventListener('input', function () {
     clearTimeout(searchTimer);
-    searchTimer = setTimeout(renderGrid, 110);
+    searchTimer = setTimeout(function () { renderGrid(); syncSearchHash(); }, 110);
   });
   renderGrid();
 
@@ -1952,6 +1963,13 @@
       var es = h.slice('edit='.length);
       var ei = themes.findIndex(function (t) { return slug(t.name) === es; });
       if (ei >= 0) { showEdit(ei); return; }
+    }
+    if (h.indexOf('search=') === 0) {
+      hideCompare(); hideEdit();
+      if (backdrop.classList.contains('open')) closeDetail();
+      searchInput.value = decodeURIComponent(h.slice('search='.length));
+      renderGrid();
+      return;
     }
     hideCompare(); // any non-compare route leaves the compare view
     hideEdit();    // ...and the editor
