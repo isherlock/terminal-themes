@@ -1,5 +1,7 @@
 # Terminal Themes
 
+**[→ Try it live](https://isherlock.github.io/terminal-themes/)**
+
 A tiny static web app that visualizes iTerm2 color themes as a gallery grid of
 mini terminal previews. Each card renders a realistic terminal snippet using a
 theme's real background, foreground, and 16 ANSI colors, plus a 16-swatch
