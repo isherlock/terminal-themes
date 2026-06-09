@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Terminal Themes — iTerm2 colour theme gallery</title>
+<meta name="description" content="A gallery of iTerm2 terminal colour themes — browse, preview, compare, and edit 500+ schemes rendered as realistic terminal previews.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2314151a'/><path d='M7 11l5 5-5 5' fill='none' stroke='%237ee787' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/><rect x='15' y='20' width='10' height='2.6' rx='1.3' fill='%23cdd2dc'/></svg>">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Terminal Themes — iTerm2 colour theme gallery">
+<meta property="og:description" content="Browse, preview, compare, and edit 500+ iTerm2 terminal colour schemes — rendered as realistic terminal previews.">
+<meta property="og:url" content="https://isherlock.github.io/terminal-themes/">
+<meta name="twitter:card" content="summary">
 <script src="data/themes.js"></script>
 <style>
   @font-face {
@@ -68,7 +75,7 @@
   .search:focus { outline: none; border-color: #4a4d58; }
   .search::placeholder { color: #5f6672; }
   .search::-webkit-search-cancel-button { -webkit-appearance: none; }
-  .htools { display: flex; align-items: center; gap: 10px; }
+  .htools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .seg {
     display: inline-flex;
     border: 1px solid #2a2c35;
@@ -222,6 +229,16 @@
 
   .card { cursor: pointer; }
   .card:hover { border-color: #4a4d58; }
+
+  /* phones: wrap the toolbar and keep each card within the viewport
+     (the terminal preview scrolls horizontally inside its own card) */
+  @media (max-width: 480px) {
+    html, body { overflow-x: hidden; }
+    header { padding-left: 16px; padding-right: 16px; }
+    .section { padding-left: 16px; padding-right: 16px; }
+    .grid { grid-template-columns: minmax(0, 1fr); }
+    .search { width: auto; flex: 1 1 140px; min-width: 0; }
+  }
 
   /* saved-theme cards (open in the editor; have a delete control) */
   .saved-card { position: relative; }
@@ -1526,7 +1543,7 @@
   });
 
   // ---- Saved themes (localStorage; per-browser, survives reloads) ----
-  var SAVED_KEY = 'themelab.saved.v1';
+  var SAVED_KEY = 'terminal-themes.saved.v1';
   function loadSaved() {
     try { return JSON.parse(localStorage.getItem(SAVED_KEY)) || []; }
     catch (e) { return []; }
